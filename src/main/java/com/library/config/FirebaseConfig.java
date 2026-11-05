@@ -25,6 +25,40 @@ public class FirebaseConfig {
     @PostConstruct
     public void initializeFirebase() {
         try {
+            // 1. Check raw JSON credentials from environment variable (Ideal for Vercel / Cloud)
+            String envJson = System.getenv("FIREBASE_SERVICE_ACCOUNT_JSON");
+            if (envJson != null && !envJson.isBlank() && envJson.contains("BEGIN PRIVATE KEY")) {
+                FirebaseOptions options = FirebaseOptions.builder()
+                        .setCredentials(GoogleCredentials.fromStream(new ByteArrayInputStream(envJson.getBytes(StandardCharsets.UTF_8))))
+                        .setProjectId(PROJECT_ID)
+                        .build();
+
+                if (FirebaseApp.getApps().isEmpty()) {
+                    FirebaseApp.initializeApp(options);
+                }
+                firestoreAvailable = true;
+                logger.info(">>> Firebase initialized successfully from FIREBASE_SERVICE_ACCOUNT_JSON env variable for: {}", PROJECT_ID);
+                return;
+            }
+
+            // 2. Check Base64 encoded credentials from environment variable
+            String envBase64 = System.getenv("FIREBASE_KEY_BASE64");
+            if (envBase64 != null && !envBase64.isBlank()) {
+                byte[] decoded = java.util.Base64.getDecoder().decode(envBase64.trim());
+                FirebaseOptions options = FirebaseOptions.builder()
+                        .setCredentials(GoogleCredentials.fromStream(new ByteArrayInputStream(decoded)))
+                        .setProjectId(PROJECT_ID)
+                        .build();
+
+                if (FirebaseApp.getApps().isEmpty()) {
+                    FirebaseApp.initializeApp(options);
+                }
+                firestoreAvailable = true;
+                logger.info(">>> Firebase initialized successfully from FIREBASE_KEY_BASE64 env variable for: {}", PROJECT_ID);
+                return;
+            }
+
+            // 3. Check classpath file serviceAccountKey.json
             InputStream serviceAccount = getClass()
                     .getClassLoader()
                     .getResourceAsStream("serviceAccountKey.json");

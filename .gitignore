@@ -44,3 +44,4 @@ Thumbs.db
 # Sensitive Firebase credentials
 **/serviceAccountKey.json
 *serviceAccountKey*.json
+

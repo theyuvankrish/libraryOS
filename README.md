@@ -67,6 +67,19 @@ Open your browser at:
 
 ---
 
+## ☁️ Deploying to Vercel (or Cloud Containers)
+
+This repository includes a multi-stage `Dockerfile` and `vercel.json` configured for Vercel's **Container Runtime**.
+
+### Deploy Steps:
+1. Import your GitHub repository `https://github.com/theyuvankrish/libraryOS` into [Vercel](https://vercel.com/new).
+2. Vercel will detect `vercel.json` / `Dockerfile.vercel` automatically as a Container project.
+3. In **Environment Variables**, add:
+   - **`FIREBASE_SERVICE_ACCOUNT_JSON`**: Paste your full Firebase service account `.json` content here (or use `FIREBASE_KEY_BASE64`).
+4. Click **Deploy**! Vercel will build the Maven image, attach its dynamic `$PORT`, and provide your live URL.
+
+---
+
 ## 📂 Project Structure
 
 ```
@@ -104,3 +117,4 @@ library-management/
 
 ## 📄 License
 MIT License
+
