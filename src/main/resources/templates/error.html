@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - LibraryOS</title>
+    <link rel="stylesheet" th:href="@{/css/brutalist.css?v=2.0}">
+</head>
+<body>
+
+<!-- Navbar (Glassmorphism & Balanced) -->
+<nav class="navbar" style="background: rgba(18, 18, 18, 0.85); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border-bottom: 3px solid #000; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35); padding: 14px 0; position: sticky; top: 0; z-index: 100;">
+    <div class="navbar-inner" style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between;">
+        <a class="navbar-brand" href="/books" style="display: flex; align-items: center; gap: 12px; padding: 8px 18px; font-size: 1.35rem; font-weight: 800; color: #FFDE59; text-decoration: none; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; background: rgba(255, 255, 255, 0.08); transition: all 0.15s ease;">
+            <img class="brand-logo-img" th:src="@{/images/books.svg}" alt="Library Logo" width="30" height="30" style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; object-fit: contain; display: inline-block; vertical-align: middle;" />
+            <span style="letter-spacing: -0.5px;">LibraryOS</span>
+        </a>
+        <div style="display: flex; align-items: center;">
+            <a class="nav-link-add" href="/books/new" style="display: inline-flex; align-items: center; gap: 8px; background: #FFDE59; color: #0A0A0A; font-weight: 800; font-size: 0.95rem; padding: 10px 22px; border: 3px solid #0A0A0A; border-radius: 12px; text-decoration: none; box-shadow: 4px 4px 0px #0A0A0A; transition: all 0.15s ease;">
+                + Add Book
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="main-wrapper">
+    <div class="error-page">
+        <div class="error-code">404</div>
+        <div class="error-message" th:text="${error != null ? error : 'Something went wrong'}">Something went wrong</div>
+        <p class="text-muted" style="margin-bottom:28px;">The page or resource you requested could not be found.</p>
+        <a href="/books" class="btn btn-primary">&#8592; Back to Home</a>
+    </div>
+</div>
+
+<footer class="footer">
+    <span>LibraryOS</span> &mdash; Powered by Spring Boot + Firebase &nbsp;|&nbsp; Neo-Brutalism Edition
+</footer>
+</body>
+</html>

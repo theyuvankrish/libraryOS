@@ -1,0 +1,16 @@
+{
+  "projects": {
+    "default": "miniproject-fd03e"
+  },
+  "emulators": {
+    "dataconnect": {
+      "port": 9399
+    },
+    "firestore": {
+      "port": 8085
+    }
+  },
+  "dataconnect": {
+    "source": "dataconnect"
+  }
+}

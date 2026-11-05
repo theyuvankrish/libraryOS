@@ -1,0 +1,8 @@
+connectorId: "library-connector"
+generate:
+  # No JS/mobile SDK needed - Spring Boot uses Admin SDK directly
+  # Uncomment below if you add a web frontend later:
+  # javascriptSdk:
+  #   outputDir: "../web/src/lib/dataconnect"
+  #   package: "@library/dataconnect"
+

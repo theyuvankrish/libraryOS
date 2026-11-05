@@ -1,0 +1,108 @@
+# ============================================================
+# Library Management - Queries (Firebase SQL Connect)
+# All operations are SERVER-SIDE via Spring Boot Admin SDK.
+# @auth(level: NO_ACCESS) prevents direct client access.
+# ============================================================
+
+# ---- Get single book by UUID ----
+query GetBookById($id: UUID!) @auth(level: NO_ACCESS) {
+  book(id: $id) {
+    id
+    bookId
+    title
+    author
+    isbn
+    category
+    publisher
+    quantity
+    status
+    createdAt
+    updatedAt
+  }
+}
+
+# ---- Get book by custom bookId (e.g. BK-1001) ----
+query GetBookByBookId($bookId: String!) @auth(level: NO_ACCESS) {
+  books(where: { bookId: { eq: $bookId } }, limit: 1) {
+    id
+    bookId
+    title
+    author
+    isbn
+    category
+    publisher
+    quantity
+    status
+    createdAt
+    updatedAt
+  }
+}
+
+# ---- List all books ----
+query ListAllBooks @auth(level: NO_ACCESS) {
+  books(orderBy: [{ createdAt: DESC }]) {
+    id
+    bookId
+    title
+    author
+    isbn
+    category
+    publisher
+    quantity
+    status
+    createdAt
+  }
+}
+
+# ---- Search books by title ----
+query SearchBooksByTitle($query: String!) @auth(level: NO_ACCESS) {
+  books_search(query: $query) {
+    id
+    bookId
+    title
+    author
+    isbn
+    category
+    publisher
+    quantity
+    status
+  }
+}
+
+# ---- Filter by category ----
+query GetBooksByCategory($category: BookCategory!) @auth(level: NO_ACCESS) {
+  books(
+    where: { category: { eq: $category } }
+    orderBy: [{ title: ASC }]
+  ) {
+    id
+    bookId
+    title
+    author
+    quantity
+    status
+  }
+}
+
+# ---- Filter by status ----
+query GetBooksByStatus($status: BookStatus!) @auth(level: NO_ACCESS) {
+  books(
+    where: { status: { eq: $status } }
+    orderBy: [{ title: ASC }]
+  ) {
+    id
+    bookId
+    title
+    author
+    quantity
+    status
+  }
+}
+
+# ---- Dashboard stats ----
+query GetLibraryStats @auth(level: NO_ACCESS) {
+  available: books(where: { status: { eq: AVAILABLE } }) { id }
+  lowStock: books(where: { status: { eq: LOW_STOCK } }) { id }
+  outOfStock: books(where: { status: { eq: OUT_OF_STOCK } }) { id }
+}
+

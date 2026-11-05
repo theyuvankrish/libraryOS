@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${formTitle} + ' - LibraryOS'">Book Form - LibraryOS</title>
+    <link rel="stylesheet" th:href="@{/css/brutalist.css?v=2.0}">
+</head>
+<body>
+
+<!-- Navbar (Glassmorphism & Balanced) -->
+<nav class="navbar" style="background: rgba(18, 18, 18, 0.85); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border-bottom: 3px solid #000; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35); padding: 14px 0; position: sticky; top: 0; z-index: 100;">
+    <div class="navbar-inner" style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between;">
+        <a class="navbar-brand" href="/books" style="display: flex; align-items: center; gap: 12px; padding: 8px 18px; font-size: 1.35rem; font-weight: 800; color: #FFDE59; text-decoration: none; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; background: rgba(255, 255, 255, 0.08); transition: all 0.15s ease;">
+            <img class="brand-logo-img" th:src="@{/images/books.svg}" alt="Library Logo" width="30" height="30" style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; object-fit: contain; display: inline-block; vertical-align: middle;" />
+            <span style="letter-spacing: -0.5px;">LibraryOS</span>
+        </a>
+        <div style="display: flex; align-items: center;">
+            <a class="nav-link-add" href="/books/new" style="display: inline-flex; align-items: center; gap: 8px; background: #FFDE59; color: #0A0A0A; font-weight: 800; font-size: 0.95rem; padding: 10px 22px; border: 3px solid #0A0A0A; border-radius: 12px; text-decoration: none; box-shadow: 4px 4px 0px #0A0A0A; transition: all 0.15s ease;">
+                + Add Book
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="main-wrapper">
+
+    <a href="/books" class="back-link">&#8592; Back to Catalog</a>
+
+    <div class="page-header">
+        <h1 class="page-title" th:text="${formTitle}">Add Book</h1>
+        <p class="page-subtitle" th:if="${!isEdit}">Fill in the details below to add a new book to the library</p>
+        <p class="page-subtitle" th:if="${isEdit}">Modify the details below and save to update this record</p>
+    </div>
+
+    <div class="form-card">
+        <div class="form-card-header">
+            <span th:if="${!isEdit}">&#128214; New Book Record</span>
+            <span th:if="${isEdit}">&#9998;&#65039; Editing: <span th:text="${book.id}"></span></span>
+        </div>
+
+        <div class="form-card-body">
+            <!-- Add Form -->
+            <form th:if="${!isEdit}"
+                  th:action="@{/books}"
+                  th:object="${book}"
+                  method="post"
+                  novalidate>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Title <span class="required">*</span></label>
+                        <input type="text" class="form-control" th:field="*{title}"
+                               th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'"
+                               placeholder="e.g. Clean Code"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}"
+                             th:errors="*{title}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Author <span class="required">*</span></label>
+                        <input type="text" class="form-control" th:field="*{author}"
+                               th:classappend="${#fields.hasErrors('author')} ? 'is-invalid'"
+                               placeholder="e.g. Robert C. Martin"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('author')}"
+                             th:errors="*{author}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ISBN <span class="required">*</span></label>
+                        <input type="text" class="form-control" th:field="*{isbn}"
+                               th:classappend="${#fields.hasErrors('isbn')} ? 'is-invalid'"
+                               placeholder="e.g. 9780132350884"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('isbn')}"
+                             th:errors="*{isbn}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Category <span class="required">*</span></label>
+                        <select class="form-control" th:field="*{category}"
+                                th:classappend="${#fields.hasErrors('category')} ? 'is-invalid'">
+                            <option value="">&#8212; Select Category &#8212;</option>
+                            <option value="Technology &amp; Engineering">Technology &amp; Engineering</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Science">Science</option>
+                            <option value="Business &amp; Management">Business &amp; Management</option>
+                            <option value="Literature &amp; Fiction">Literature &amp; Fiction</option>
+                            <option value="History">History</option>
+                            <option value="Philosophy">Philosophy</option>
+                            <option value="Medicine &amp; Health">Medicine &amp; Health</option>
+                            <option value="Arts &amp; Design">Arts &amp; Design</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('category')}"
+                             th:errors="*{category}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Publisher <span class="required">*</span></label>
+                        <input type="text" class="form-control" th:field="*{publisher}"
+                               th:classappend="${#fields.hasErrors('publisher')} ? 'is-invalid'"
+                               placeholder="e.g. Prentice Hall"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('publisher')}"
+                             th:errors="*{publisher}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Quantity <span class="required">*</span></label>
+                        <input type="number" class="form-control" th:field="*{quantity}"
+                               th:classappend="${#fields.hasErrors('quantity')} ? 'is-invalid'"
+                               min="0" placeholder="0"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('quantity')}"
+                             th:errors="*{quantity}"></div>
+                        <span class="quantity-hint">Status auto-computed: 0=Out of Stock, 1-3=Low Stock, 4+=Available</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">&#10003; Add Book</button>
+                    <a href="/books" class="btn btn-secondary">&#10005; Cancel</a>
+                </div>
+            </form>
+
+            <!-- Edit Form -->
+            <form th:if="${isEdit}"
+                  th:action="@{/books/{id}/update(id=${book.id})}"
+                  th:object="${book}"
+                  method="post"
+                  novalidate>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Title <span class="required">*</span></label>
+                        <input type="text" class="form-control" th:field="*{title}"
+                               th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}"
+                             th:errors="*{title}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Author <span class="required">*</span></label>
+                        <input type="text" class="form-control" th:field="*{author}"
+                               th:classappend="${#fields.hasErrors('author')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('author')}"
+                             th:errors="*{author}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ISBN <span class="required">*</span></label>
+                        <input type="text" class="form-control" th:field="*{isbn}"
+                               th:classappend="${#fields.hasErrors('isbn')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('isbn')}"
+                             th:errors="*{isbn}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Category <span class="required">*</span></label>
+                        <select class="form-control" th:field="*{category}"
+                                th:classappend="${#fields.hasErrors('category')} ? 'is-invalid'">
+                            <option value="">&#8212; Select Category &#8212;</option>
+                            <option value="Technology &amp; Engineering">Technology &amp; Engineering</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Science">Science</option>
+                            <option value="Business &amp; Management">Business &amp; Management</option>
+                            <option value="Literature &amp; Fiction">Literature &amp; Fiction</option>
+                            <option value="History">History</option>
+                            <option value="Philosophy">Philosophy</option>
+                            <option value="Medicine &amp; Health">Medicine &amp; Health</option>
+                            <option value="Arts &amp; Design">Arts &amp; Design</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('category')}"
+                             th:errors="*{category}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Publisher <span class="required">*</span></label>
+                        <input type="text" class="form-control" th:field="*{publisher}"
+                               th:classappend="${#fields.hasErrors('publisher')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('publisher')}"
+                             th:errors="*{publisher}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Quantity <span class="required">*</span></label>
+                        <input type="number" class="form-control" th:field="*{quantity}"
+                               th:classappend="${#fields.hasErrors('quantity')} ? 'is-invalid'"
+                               min="0"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('quantity')}"
+                             th:errors="*{quantity}"></div>
+                        <span class="quantity-hint">Status auto-computed: 0=Out of Stock, 1-3=Low Stock, 4+=Available</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">&#10003; Save Changes</button>
+                    <a href="/books" class="btn btn-secondary">&#10005; Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<footer class="footer">
+    <span>LibraryOS</span> &mdash; Powered by Spring Boot + Firebase &nbsp;|&nbsp; Neo-Brutalism Edition
+</footer>
+</body>
+</html>

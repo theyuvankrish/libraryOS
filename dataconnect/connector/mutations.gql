@@ -1,0 +1,92 @@
+# ============================================================
+# Library Management - Mutations (Firebase SQL Connect)
+# @auth(level: NO_ACCESS) = server-side only via Admin SDK
+# ============================================================
+
+# ---- Add a new book ----
+mutation AddBook(
+  $bookId: String!
+  $title: String!
+  $author: String!
+  $isbn: String!
+  $category: BookCategory!
+  $publisher: String!
+  $quantity: Int!
+  $status: BookStatus!
+) @auth(level: NO_ACCESS) {
+  book_insert(data: {
+    bookId: $bookId
+    title: $title
+    author: $author
+    isbn: $isbn
+    category: $category
+    publisher: $publisher
+    quantity: $quantity
+    status: $status
+  })
+}
+
+# ---- Update book info ----
+mutation UpdateBook(
+  $id: UUID!
+  $title: String!
+  $author: String!
+  $isbn: String!
+  $category: BookCategory!
+  $publisher: String!
+  $quantity: Int!
+  $status: BookStatus!
+) @auth(level: NO_ACCESS) {
+  book_update(id: $id, data: {
+    title: $title
+    author: $author
+    isbn: $isbn
+    category: $category
+    publisher: $publisher
+    quantity: $quantity
+    status: $status
+    updatedAt_expr: "request.time"
+  })
+}
+
+# ---- Update quantity only ----
+mutation UpdateBookQuantity(
+  $id: UUID!
+  $quantity: Int!
+  $status: BookStatus!
+) @auth(level: NO_ACCESS) {
+  book_update(id: $id, data: {
+    quantity: $quantity
+    status: $status
+    updatedAt_expr: "request.time"
+  })
+}
+
+# ---- Delete a book ----
+mutation DeleteBook($id: UUID!) @auth(level: NO_ACCESS) {
+  book_delete(id: $id)
+}
+
+# ---- Upsert (Add or Update) ----
+mutation UpsertBook(
+  $bookId: String!
+  $title: String!
+  $author: String!
+  $isbn: String!
+  $category: BookCategory!
+  $publisher: String!
+  $quantity: Int!
+  $status: BookStatus!
+) @auth(level: NO_ACCESS) {
+  book_upsert(data: {
+    bookId: $bookId
+    title: $title
+    author: $author
+    isbn: $isbn
+    category: $category
+    publisher: $publisher
+    quantity: $quantity
+    status: $status
+  })
+}
+

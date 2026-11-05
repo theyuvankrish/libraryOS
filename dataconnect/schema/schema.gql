@@ -1,0 +1,43 @@
+# ============================================================
+# Library Management System - Firebase SQL Connect Schema
+# Maps to Cloud SQL PostgreSQL database: librarydb
+# ============================================================
+
+# Book Status Enum
+enum BookStatus {
+  AVAILABLE
+  LOW_STOCK
+  OUT_OF_STOCK
+}
+
+# Book Category Enum
+enum BookCategory {
+  TECHNOLOGY_AND_ENGINEERING
+  COMPUTER_SCIENCE
+  MATHEMATICS
+  SCIENCE
+  BUSINESS_AND_MANAGEMENT
+  LITERATURE_AND_FICTION
+  HISTORY
+  PHILOSOPHY
+  MEDICINE_AND_HEALTH
+  ARTS_AND_DESIGN
+  OTHER
+}
+
+# ---- Core Book Table ----
+# Maps to PostgreSQL table: book
+type Book @table(name: "book", singular: "book", plural: "books") {
+  # Auto-generated: id: UUID!
+  bookId: String! @col(name: "book_id", dataType: "varchar(50)") @unique
+  title: String! @col(dataType: "varchar(300)") @index @searchable
+  author: String! @col(dataType: "varchar(200)") @index @searchable
+  isbn: String! @col(dataType: "varchar(20)") @unique
+  category: BookCategory!
+  publisher: String! @col(dataType: "varchar(200)")
+  quantity: Int!
+  status: BookStatus! @default(value: AVAILABLE)
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+}
+

@@ -1,0 +1,13 @@
+specVersion: "v1"
+serviceId: "library-management"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "librarydb"
+      cloudSql:
+        instanceId: "library-management-instance"
+      schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]
+

@@ -1,0 +1,63 @@
+# ============================================================
+# LOCAL ONLY: Seed data for Firebase SQL Connect emulator
+# Run with: npx firebase-tools@latest emulators:start --only dataconnect
+# DO NOT deploy this file - it's for local development only
+# ============================================================
+
+mutation SeedBooks @auth(level: NO_ACCESS) {
+  b1: book_insert(data: {
+    bookId: "BK-1001"
+    title: "Clean Code"
+    author: "Robert C. Martin"
+    isbn: "9780132350884"
+    category: COMPUTER_SCIENCE
+    publisher: "Prentice Hall"
+    quantity: 10
+    status: AVAILABLE
+  })
+
+  b2: book_insert(data: {
+    bookId: "BK-1002"
+    title: "Designing Data-Intensive Applications"
+    author: "Martin Kleppmann"
+    isbn: "9781449373320"
+    category: TECHNOLOGY_AND_ENGINEERING
+    publisher: "O'Reilly Media"
+    quantity: 7
+    status: AVAILABLE
+  })
+
+  b3: book_insert(data: {
+    bookId: "BK-1003"
+    title: "The Pragmatic Programmer"
+    author: "Andrew Hunt"
+    isbn: "9780135957059"
+    category: COMPUTER_SCIENCE
+    publisher: "Addison-Wesley"
+    quantity: 3
+    status: LOW_STOCK
+  })
+
+  b4: book_insert(data: {
+    bookId: "BK-1004"
+    title: "Introduction to Algorithms"
+    author: "Thomas H. Cormen"
+    isbn: "9780262033848"
+    category: MATHEMATICS
+    publisher: "MIT Press"
+    quantity: 0
+    status: OUT_OF_STOCK
+  })
+
+  b5: book_insert(data: {
+    bookId: "BK-1005"
+    title: "Spring in Action"
+    author: "Craig Walls"
+    isbn: "9781617294945"
+    category: TECHNOLOGY_AND_ENGINEERING
+    publisher: "Manning Publications"
+    quantity: 5
+    status: AVAILABLE
+  })
+}
+

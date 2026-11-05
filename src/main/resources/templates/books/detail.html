@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${book.title} + ' - LibraryOS'">Book Detail - LibraryOS</title>
+    <link rel="stylesheet" th:href="@{/css/brutalist.css?v=2.0}">
+</head>
+<body>
+
+<!-- Navbar (Glassmorphism & Balanced) -->
+<nav class="navbar" style="background: rgba(18, 18, 18, 0.85); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border-bottom: 3px solid #000; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35); padding: 14px 0; position: sticky; top: 0; z-index: 100;">
+    <div class="navbar-inner" style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between;">
+        <a class="navbar-brand" href="/books" style="display: flex; align-items: center; gap: 12px; padding: 8px 18px; font-size: 1.35rem; font-weight: 800; color: #FFDE59; text-decoration: none; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; background: rgba(255, 255, 255, 0.08); transition: all 0.15s ease;">
+            <img class="brand-logo-img" th:src="@{/images/books.svg}" alt="Library Logo" width="30" height="30" style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; object-fit: contain; display: inline-block; vertical-align: middle;" />
+            <span style="letter-spacing: -0.5px;">LibraryOS</span>
+        </a>
+        <div style="display: flex; align-items: center;">
+            <a class="nav-link-add" href="/books/new" style="display: inline-flex; align-items: center; gap: 8px; background: #FFDE59; color: #0A0A0A; font-weight: 800; font-size: 0.95rem; padding: 10px 22px; border: 3px solid #0A0A0A; border-radius: 12px; text-decoration: none; box-shadow: 4px 4px 0px #0A0A0A; transition: all 0.15s ease;">
+                + Add Book
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="main-wrapper">
+
+    <a href="/books" class="back-link">&#8592; Back to Catalog</a>
+
+    <div class="page-header">
+        <h1 class="page-title">Book <span>Detail</span></h1>
+        <p class="page-subtitle">Viewing complete information for this book record</p>
+    </div>
+
+    <div class="detail-card">
+        <!-- Header -->
+        <div class="detail-header">
+            <div class="detail-header-id" th:text="${book.id}">BK-001</div>
+            <div class="detail-header-title" th:text="${book.title}">Book Title</div>
+            <div class="detail-header-author">by <span th:text="${book.author}">Author Name</span></div>
+            <div class="detail-status-block">
+                <span class="status-badge"
+                      th:classappend="${book.status == 'AVAILABLE' ? 'status-available' : (book.status == 'LOW_STOCK' ? 'status-low' : 'status-out')}"
+                      th:text="${book.status}">STATUS</span>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="detail-body">
+            <div class="detail-grid">
+                <div class="detail-field">
+                    <div class="detail-field-label">ISBN</div>
+                    <div class="detail-field-value mono" th:text="${book.isbn}">ISBN</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-field-label">Category</div>
+                    <div class="detail-field-value" th:text="${book.category}">Category</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-field-label">Publisher</div>
+                    <div class="detail-field-value" th:text="${book.publisher}">Publisher</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-field-label">Quantity in Stock</div>
+                    <div class="detail-field-value">
+                        <div class="quantity-display" th:text="${book.quantity}">0</div>
+                        <div class="quantity-bar-wrap">
+                            <div class="quantity-bar-fill"
+                                 th:classappend="${book.quantity > 10 ? 'high' : (book.quantity > 3 ? 'medium' : 'low')}"
+                                 th:style="'width: ' + ${book.quantity > 20 ? 100 : book.quantity * 5} + '%'"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="detail-actions">
+                <a class="btn btn-edit" th:href="@{/books/{id}/edit(id=${book.id})}">&#9998; Edit Book</a>
+                <button class="btn btn-danger" type="button"
+                        th:attr="onclick='openDeleteModal(\'' + ${book.id} + '\', \'' + ${book.title} + '\')'">
+                    &#128465; Delete Book
+                </button>
+                <a href="/books" class="btn btn-secondary">&#8592; Back to List</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-box">
+        <h3>&#9888;&#65039; Delete Book?</h3>
+        <p>Are you sure you want to delete "<strong id="deleteBookTitle"></strong>"?
+           This action <strong>cannot be undone</strong>.</p>
+        <div class="modal-actions">
+            <form id="deleteForm" method="post">
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <span>LibraryOS</span> &mdash; Powered by Spring Boot + Firebase &nbsp;|&nbsp; Neo-Brutalism Edition
+</footer>
+
+<script>
+    function openDeleteModal(id, title) {
+        document.getElementById('deleteBookTitle').textContent = title;
+        document.getElementById('deleteForm').action = '/books/' + id + '/delete';
+        document.getElementById('deleteModal').classList.add('show');
+    }
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('show');
+    }
+</script>
+</body>
+</html>

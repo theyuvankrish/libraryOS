@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" th:href="@{/css/brutalist.css?v=2.0}">
+</head>
+<body>
+
+<!-- Navbar (Glassmorphism & Balanced) -->
+<nav class="navbar" style="background: rgba(18, 18, 18, 0.85); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border-bottom: 3px solid #000; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35); padding: 14px 0; position: sticky; top: 0; z-index: 100;">
+    <div class="navbar-inner" style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between;">
+        <a class="navbar-brand" href="/books" style="display: flex; align-items: center; gap: 12px; padding: 8px 18px; font-size: 1.35rem; font-weight: 800; color: #FFDE59; text-decoration: none; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; background: rgba(255, 255, 255, 0.08); transition: all 0.15s ease;">
+            <img class="brand-logo-img" th:src="@{/images/books.svg}" alt="Library Logo" width="30" height="30" style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; object-fit: contain; display: inline-block; vertical-align: middle;" />
+            <span style="letter-spacing: -0.5px;">LibraryOS</span>
+        </a>
+        <div style="display: flex; align-items: center;">
+            <a class="nav-link-add" href="/books/new" style="display: inline-flex; align-items: center; gap: 8px; background: #FFDE59; color: #0A0A0A; font-weight: 800; font-size: 0.95rem; padding: 10px 22px; border: 3px solid #0A0A0A; border-radius: 12px; text-decoration: none; box-shadow: 4px 4px 0px #0A0A0A; transition: all 0.15s ease;">
+                + Add Book
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main -->
+<div class="main-wrapper">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">Book <span>Catalog</span></h1>
+        <p class="page-subtitle">Manage your library's complete book inventory</p>
+    </div>
+
+    <!-- Flash Messages -->
+    <div class="alert alert-success" th:if="${successMessage}" id="successAlert">
+        <span>&#10003;</span>
+        <span th:text="${successMessage}"></span>
+        <button class="alert-close" onclick="this.parentElement.remove()">&#10005;</button>
+    </div>
+    <div class="alert alert-error" th:if="${errorMessage}" id="errorAlert">
+        <span>&#9888;</span>
+        <span th:text="${errorMessage}"></span>
+        <button class="alert-close" onclick="this.parentElement.remove()">&#10005;</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-label">Total Books</div>
+            <div class="stat-value" th:text="${totalBooks}">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Available</div>
+            <div class="stat-value" th:text="${availableCount}">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Out of Stock</div>
+            <div class="stat-value" th:text="${outOfStockCount}">0</div>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <form action="/books" method="get">
+        <div class="search-bar">
+            <input type="text" name="search" placeholder="Search by title, author, ISBN, category or ID..."
+                   th:value="${search}" autocomplete="off"/>
+            <button type="submit">SEARCH</button>
+        </div>
+        <div th:if="${search != null and !#strings.isEmpty(search)}" style="margin-bottom:16px;">
+            <span>Showing results for: <strong th:text="${search}"></strong></span>
+            <a href="/books" class="clear-search">&#10005; Clear</a>
+        </div>
+    </form>
+
+    <!-- Error from service -->
+    <div class="alert alert-error" th:if="${error}">
+        <span>&#9888;</span>
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Books Table -->
+    <div class="table-wrapper table-scroll" th:if="${books != null and !books.isEmpty()}">
+        <table class="books-table">
+            <thead>
+                <tr>
+                    <th>Book ID</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>ISBN</th>
+                    <th>Qty</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="book : ${books}">
+                    <td><span class="book-id" th:text="${book.id}">BK-001</span></td>
+                    <td><span class="book-title-cell" th:text="${book.title}">Title</span></td>
+                    <td th:text="${book.author}">Author</td>
+                    <td th:text="${book.category}">Category</td>
+                    <td><span style="font-family:monospace;font-size:0.82rem;" th:text="${book.isbn}">ISBN</span></td>
+                    <td><strong th:text="${book.quantity}">0</strong></td>
+                    <td>
+                        <span class="status-badge"
+                              th:classappend="${book.status == 'AVAILABLE' ? 'status-available' : (book.status == 'LOW_STOCK' ? 'status-low' : 'status-out')}"
+                              th:text="${book.status}">STATUS</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a class="btn btn-view" th:href="@{/books/{id}(id=${book.id})}">&#128065; View</a>
+                            <a class="btn btn-edit" th:href="@{/books/{id}/edit(id=${book.id})}">&#9998; Edit</a>
+                            <button class="btn btn-delete" type="button"
+                                    th:attr="onclick='openDeleteModal(\'' + ${book.id} + '\', \'' + ${book.title} + '\')'">
+                                &#128465; Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Empty State -->
+    <div class="table-wrapper" th:if="${books == null or books.isEmpty()}">
+        <div class="empty-state">
+            <span class="empty-icon">&#128237;</span>
+            <h3 th:if="${search != null and !#strings.isEmpty(search)}">No books found for "<span th:text="${search}"></span>"</h3>
+            <h3 th:unless="${search != null and !#strings.isEmpty(search)}">No books in the library yet</h3>
+            <p>Start by adding your first book to the catalog.</p>
+            <a href="/books/new" class="btn btn-primary">+ Add First Book</a>
+        </div>
+    </div>
+
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-box">
+        <h3>&#9888;&#65039; Delete Book?</h3>
+        <p>Are you sure you want to delete "<strong id="deleteBookTitle"></strong>"?
+           This action <strong>cannot be undone</strong>.</p>
+        <div class="modal-actions">
+            <form id="deleteForm" method="post">
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <span>LibraryOS</span> &mdash; Powered by Spring Boot + Firebase &nbsp;|&nbsp; Neo-Brutalism Edition
+</footer>
+
+<script>
+    function openDeleteModal(id, title) {
+        document.getElementById('deleteBookTitle').textContent = title;
+        document.getElementById('deleteForm').action = '/books/' + id + '/delete';
+        document.getElementById('deleteModal').classList.add('show');
+    }
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('show');
+    }
+    setTimeout(() => {
+        const s = document.getElementById('successAlert');
+        if (s) s.remove();
+    }, 5000);
+</script>
+</body>
+</html>
